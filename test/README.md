@@ -1,0 +1,1 @@
+To execute history tracker tests, download backbone 0.9.2 (https://github.com/documentcloud/backbone/zipball/0.9.2).  Unzip contents and move as a sub-directory under here called 'backbone'.  Then view index.html in your browser.
