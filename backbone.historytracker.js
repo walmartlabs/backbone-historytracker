@@ -1,6 +1,5 @@
 (function() {
   // cached super methods
-  var _delegateEvents = Backbone.View.prototype.delegateEvents;
   var _getFragment = Backbone.History.prototype.getFragment;
   var _start = Backbone.History.prototype.start;
   var _checkUrl = Backbone.History.prototype.checkUrl;
@@ -163,4 +162,3 @@
   });
 
 }());
-
