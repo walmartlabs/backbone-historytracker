@@ -134,7 +134,7 @@ $(document).ready(function() {
       routeBind(step7);
 
       setTimeout(function() {
-        // Backbone.history.go(-2, false);
+        Backbone.history.go(-2, false);
         Backbone.history.navigate('search/manhattan/p70', true);
       }, 0);
     }

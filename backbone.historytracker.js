@@ -131,6 +131,7 @@
       if (this._ignoreChange) {
         this._pendingNavigate = _.bind(
             _navigate, this, fragment, options);
+        setTimeout(this._pendingNavigate, 0);
       } else {
         _navigate.call(this, fragment, options);
       }
