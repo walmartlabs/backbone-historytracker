@@ -72,17 +72,14 @@
 
     // FIXME added navigateOptions to base checkUrl method
     checkUrl : function(e) {
-      if (!this._ignoreChange) {
-        var current = this.getFragment();
-        var fromIframe = current == this.fragment && this.iframe;
-        var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
-        var navigateOptions = {
-            trigger: false,
-            replace: !loadedIndex,
-            forceIndex: loadedIndex || this._directionIndex+1
-        };
-        _checkUrl.call(this, e, navigateOptions);
-      }
+      var fromIframe = this.getFragment() == this.fragment && this.iframe;
+      var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
+      var navigateOptions = {
+          trigger: false,
+          replace: !loadedIndex,
+          forceIndex: loadedIndex || this._directionIndex+1
+      };
+      _checkUrl.call(this, e, navigateOptions);
     },
 
     // FIXME updated base loadUrl to call loadUrlHandler and added new loadUrlHandler method
@@ -102,6 +99,11 @@
     // you wish to modify the current URL without adding an entry to the history.
     // FIXME add 'options.state || {}' to the window.history[options.replace ? 'replaceState' : 'pushState'] call
     navigate: function(fragment, options) {
+      if (this._ignoreChange) {
+        this._pendingNavigate = _.bind(this.navigate, this, fragment, options);
+        return;
+      }
+
       if (!options || options === true) options = {trigger: options};
       var newIndex;
       if (this._trackDirection) {
@@ -128,13 +130,7 @@
           }
         }
       }
-      if (this._ignoreChange) {
-        this._pendingNavigate = _.bind(
-            _navigate, this, fragment, options);
-        setTimeout(this._pendingNavigate, 0);
-      } else {
-        _navigate.call(this, fragment, options);
-      }
+      _navigate.call(this, fragment, options);
     },
 
     // Pulls the direction index out of the state or hash
