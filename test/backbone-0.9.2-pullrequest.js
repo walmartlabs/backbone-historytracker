@@ -1077,12 +1077,12 @@
     // returns `false`.
     loadUrl: function(fragmentOverride) {
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var _this = this;
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          return _this.loadUrlHandler.call(_this, fragment, handler);
+          this.loadUrlHandler(fragment, handler);
+          return true;
         }
-      });
+      }, this);
       return matched;
     },
 
