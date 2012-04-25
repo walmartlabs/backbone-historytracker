@@ -70,7 +70,6 @@
       return rtn;
     },
 
-    // FIXME added navigateOptions to base checkUrl method
     checkUrl : function(e) {
       var fromIframe = this.getFragment() == this.fragment && this.iframe;
       var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
@@ -82,7 +81,6 @@
       _checkUrl.call(this, e, navigateOptions);
     },
 
-    // FIXME updated base loadUrl to call loadUrlHandler and added new loadUrlHandler method
     loadUrlHandler: function(fragment, handler) {
       if (this._ignoreChange) {
         this._ignoreChange = false;
@@ -97,7 +95,6 @@
     // The options object can contain `trigger: true` if you wish to have the
     // route callback be fired (not usually desirable), or `replace: true`, if
     // you wish to modify the current URL without adding an entry to the history.
-    // FIXME add 'options.state || {}' to the window.history[options.replace ? 'replaceState' : 'pushState'] call
     navigate: function(fragment, options) {
       if (this._ignoreChange) {
         this._pendingNavigate = _.bind(this.navigate, this, fragment, options);
