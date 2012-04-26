@@ -1,5 +1,6 @@
 (function() {
   // cached super methods
+  var _route = Backbone.History.prototype.route;
   var _getFragment = Backbone.History.prototype.getFragment;
   var _start = Backbone.History.prototype.start;
   var _checkUrl = Backbone.History.prototype.checkUrl;
@@ -19,7 +20,7 @@
       var history = Backbone.history;
       if (history._trackDirection) {
         var oldIndex = history._directionIndex;
-        history._directionIndex  = history.loadIndex();
+        history._directionIndex = history.loadIndex();
         params.direction = history._directionIndex-oldIndex;
       }
       return params;
@@ -81,17 +82,6 @@
       _checkUrl.call(this, e, navigateOptions);
     },
 
-    loadUrlHandler: function(fragment, handler) {
-      if (this._ignoreChange) {
-        this._ignoreChange = false;
-        this._directionIndex = this.loadIndex();
-        this._pendingNavigate && setTimeout(this._pendingNavigate, 0);
-      } else {
-        handler.callback(fragment);
-      }
-      return true;
-    },
-
     // The options object can contain `trigger: true` if you wish to have the
     // route callback be fired (not usually desirable), or `replace: true`, if
     // you wish to modify the current URL without adding an entry to the history.
@@ -139,6 +129,18 @@
         var match = indexMatch.exec(fragmentOverride || window.location.hash);
         return (match && parseInt(match[1], 10)) || 0;
       }
+    },
+
+    route: function (route, callback) {
+      return _route.call(this, route, _.bind(function() {
+        if (this._ignoreChange) {
+          this._ignoreChange = false;
+          this._directionIndex = Backbone.history.loadIndex();
+          this._pendingNavigate && setTimeout(Backbone.history._pendingNavigate, 0);
+        } else {
+          callback && callback.apply(this, arguments);
+        }
+      }, this));
     },
 
     back : function(triggerRoute) {
