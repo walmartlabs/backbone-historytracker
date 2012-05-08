@@ -101,23 +101,22 @@
       } else {
         if (this._trackDirection) {
           fragment = newIndex + '#' + fragment;
-          var loc = window.location;
-          if (options.replace) {
-            if (this._useReplaceState) {
-              window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + loc.pathname + (loc.search || '') + '#' + fragment);
-            } else {
-              loc.replace(loc.pathname + (loc.search || '') + '#' + fragment);
-            }
-          } else {
-            loc.hash = fragment;
-          }
-          if (this.iframe && (fragment != this.getFragment(this.iframe.location.hash))) {
-            !replace && this.iframe.document.open().close();
-            this.iframe.location.hash = fragment;
-          }
         }
       }
       _navigate.call(this, fragment, options);
+    },
+
+    _updateHash: function(location, fragment, replace) {
+      if (replace) {
+        var base = location.toString().replace(/(javascript:|#).*$/, '') + '#';
+        if (this._useReplaceState) {
+          window.history.replaceState({}, document.title, base + fragment);
+        } else {
+          location.replace(base + fragment);
+        }
+      } else {
+        location.hash = fragment;
+      }
     },
 
     // Pulls the direction index out of the state or hash
