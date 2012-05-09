@@ -7,6 +7,11 @@
   var _navigate = Backbone.History.prototype.navigate;
   var _extractParameters = Backbone.Router.prototype._extractParameters;
 
+  // If we are in hash mode figure out if we are on a browser that is hit by 63777 and 85881
+  //     https://bugs.webkit.org/show_bug.cgi?id=63777
+  //     https://bugs.webkit.org/show_bug.cgi?id=85881
+  var _useReplaceState = /WebKit\/([\d.]+)/.exec(navigator.userAgent);
+
   // pattern to recognize state index in hash
   var hashStrip = /^(?:#|%23)*\d*(?:#|%23)*/;
   // Cached regex for index extraction from the hash
@@ -42,15 +47,6 @@
 
     start: function(options) {
       var rtn = _start.apply(this, arguments);
-      // If we are in hash mode figure out if we are on a browser that is hit by 63777
-      //     https://bugs.webkit.org/show_bug.cgi?id=63777
-      if (!this._hasPushState && window.history && window.history.replaceState) {
-        var webkitVersion = /WebKit\/([\d.]+)/.exec(navigator.userAgent);
-        if (webkitVersion) {
-          webkitVersion = parseFloat(webkitVersion[1]);
-          this._useReplaceState = webkitVersion < 535.2;
-        }
-      }
       // Direction tracking setup
       this._trackDirection  = !!this.options.trackDirection;
       if (this._trackDirection) {
@@ -101,23 +97,26 @@
       } else {
         if (this._trackDirection) {
           fragment = newIndex + '#' + fragment;
-          var loc = window.location;
-          if (options.replace) {
-            if (this._useReplaceState) {
-              window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + loc.pathname + (loc.search || '') + '#' + fragment);
-            } else {
-              loc.replace(loc.pathname + (loc.search || '') + '#' + fragment);
-            }
-          } else {
-            loc.hash = fragment;
-          }
-          if (this.iframe && (fragment != this.getFragment(this.iframe.location.hash))) {
-            !replace && this.iframe.document.open().close();
-            this.iframe.location.hash = fragment;
-          }
         }
       }
       _navigate.call(this, fragment, options);
+    },
+
+    _updateHash: function(location, frag, replace) {
+      var base = location.toString().replace(/(javascript:|#).*$/, '') + '#'; 
+      if (replace) { 
+        if (_useReplaceState) { 
+          window.history.replaceState({}, document.title, base + frag); 
+        } else { 
+          location.replace(base + frag); 
+        } 
+      } else { 
+        if (_useReplaceState) { 
+          window.history.pushState({}, document.title, base + frag); 
+        } else { 
+          location.hash = frag; 
+        } 
+      }
     },
 
     // Pulls the direction index out of the state or hash
