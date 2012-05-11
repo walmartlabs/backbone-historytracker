@@ -111,11 +111,7 @@
           location.replace(base + frag); 
         } 
       } else { 
-        if (_useReplaceState) { 
-          window.history.pushState({}, document.title, base + frag); 
-        } else { 
-          location.hash = frag; 
-        } 
+        location.hash = frag;  
       }
     },
 
