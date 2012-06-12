@@ -1,5 +1,8 @@
 Overview
 --------
+
+[![Build Status](https://secure.travis-ci.org/walmartlabs/backbone-historytracker.png?branch=master)](http://travis-ci.org/walmartlabs/backbone-historytracker)
+
 History-tracker is a backbone plugin will associate an incrementing index with every route the user visits.  This is beneficial, for example, if you are interested in having a different transition from routes depending on whether the user has clicked the back button or transitioned to a new route.
 
 With "push state" support
