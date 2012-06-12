@@ -1,0 +1,19 @@
+{
+  "name": "backbone.historytracker",
+  "version": "1.0.0",
+  "repository": {
+    "url": "git://github.com/walmartlabs/backbone-historytracker.git"
+  },
+  "engines": {
+    "node": ">=0.4.2"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "connect": "*"
+  },
+  "scripts": {
+    "start": "node test/bin/server.js . 8083",
+
+    "test": "phantomjs test/bin/run-qunit.js 'http://localhost:8083/test/index.html'"
+  }
+}
