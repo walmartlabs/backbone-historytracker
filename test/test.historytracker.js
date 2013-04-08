@@ -114,4 +114,33 @@ $(document).ready(function() {
       Backbone.history.navigate('search/manhattan/p20', true);
     }, 0);
   });
+
+  asyncTest("Router: go ignore", 22, function() {
+    var hist = Backbone.history;
+
+    // Setup
+    step('20', 1, 1, function() {
+      hist.navigate('search/manhattan/p30', true);
+    });
+    step('30', 1, 2, function() {
+      hist.navigate('search/manhattan/p40', true);
+    });
+    step('40', 1, 3, function() {
+      hist.back(function(route) {
+        setTimeout(function() {
+          equals(hist.getFragment(), 'search/manhattan/p30', 'route returned value');
+          equals(hist.getIndex(), startingIndex+2, 'history index in back');
+
+          hist.back(function(route) { return true; });
+        }, 10);
+        return false;
+      });
+    });
+    step('20', -1, 1, cleanup);
+
+    routeBind(steps[0]);
+    setTimeout(function() {
+      hist.navigate('search/manhattan/p20', true);
+    }, 0);
+  });
 });

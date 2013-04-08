@@ -132,7 +132,12 @@
 
     route: function (route, callback) {
       return _route.call(this, route, _.bind(function() {
-        if (this._ignoreChange) {
+        var ignore = this._ignoreChange;
+        if (_.isFunction(ignore)) {
+          ignore = !this._ignoreChange(route);
+        }
+
+        if (ignore) {
           this._ignoreChange = false;
           this._directionIndex = Backbone.history.loadIndex();
           this._pendingNavigate && setTimeout(Backbone.history._pendingNavigate, 0);
@@ -151,7 +156,7 @@
     },
 
     go : function(count, triggerRoute) {
-      this._ignoreChange = !triggerRoute;
+      this._ignoreChange = _.isFunction(triggerRoute) ? triggerRoute : !triggerRoute;
       window.history.go(count);
     }
   });
