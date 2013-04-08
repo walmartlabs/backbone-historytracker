@@ -158,6 +158,42 @@
     go : function(count, triggerRoute) {
       this._ignoreChange = _.isFunction(triggerRoute) ? triggerRoute : !triggerRoute;
       window.history.go(count);
+    },
+
+    /**
+     * Hack to work around iframes that make have screwed with our history state.
+     * Really one should choose not to use iframes but sometimes you must, even in 2013....
+     */
+    stepOut: function(options) {
+      options = options || {};
+
+      var limit = options.limit || 10,
+          iter = 0,
+          timeout;
+
+      if (options.view) {
+        options.view.$('iframe').remove();
+      }
+
+      // General flow here is to try to do a back navigation and wait for a backbone event to trigger
+      // If one does not within a given timeout then repeat.
+      (function step() {
+        iter++;
+        Backbone.history.back(function(fragment) {
+          clearTimeout(timeout);
+
+          var ret = _.isFunction(options.trigger) ? options.trigger.apply(this, arguments) : options.trigger;
+          options.callback && options.callback(fragment);
+          return ret;
+        });
+        timeout = setTimeout(function() {
+          if (iter > limit) {
+            options.callback && options.callback(false);
+          } else {
+            step();
+          }
+        }, 100);
+      })();
     }
   });
 

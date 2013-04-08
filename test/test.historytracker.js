@@ -1,3 +1,4 @@
+/*global async */
 $(document).ready(function() {
 
   var router = null;
@@ -141,5 +142,84 @@ $(document).ready(function() {
     setTimeout(function() {
       hist.navigate('search/manhattan/p20', true);
     }, 0);
+  });
+
+  function execStepOut(history, test) {
+    var hist = Backbone.history,
+        iframe = $('<iframe src="about:blank">');
+
+    var steps = [
+      function() {
+        hist.navigate('search/manhattan/p30', true);
+      },
+      function() {
+        hist.navigate('search/manhattan/p40', true);
+        $('#qunit-fixture').append(iframe);
+      }
+    ];
+
+    if (history) {
+      steps.push(
+        function() {
+          iframe[0].contentWindow.location = 'about:blank#foo';
+        },
+        function() {
+          iframe[0].contentWindow.location = 'about:blank#bar';
+        },
+        function() {
+          iframe[0].contentWindow.location = 'about:blank#baz';
+        });
+    }
+
+    steps.push(test);
+
+    steps = _.map(steps, function(step) {
+      return function(callback) {
+        setTimeout(function() {
+          step();
+          callback();
+        }, 100);
+      };
+    });
+
+    async.series(steps);
+  }
+
+  asyncTest("Router: stepOut", 1, function() {
+    var hist = Backbone.history;
+
+    execStepOut(true, function() {
+      hist.stepOut({
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p30');
+          start();
+        }
+      });
+    });
+  });
+  asyncTest("Router: stepOut - limit", 1, function() {
+    var hist = Backbone.history;
+
+    execStepOut(true, function() {
+      hist.stepOut({
+        limit: 2,
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p40');
+          start();
+        }
+      });
+    });
+  });
+  asyncTest("Router: stepOut - no iframe", 1, function() {
+    var hist = Backbone.history;
+
+    execStepOut(false, function() {
+      hist.stepOut({
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p30');
+          start();
+        }
+      });
+    });
   });
 });
