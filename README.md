@@ -16,6 +16,3 @@ Every time a new route is visited, the route will be re-written to be prefixed w
 Usage
 -----
 To turn on the route indexing, use the 'trackDirection' property.  'Backbone.history.start({trackDirection: true});'
-
-*You must use the [Walmart Labs fork of backbone](https://github.com/walmartlabs/backbone)*.  This fork has been modified a small amount to provide better
-support to external plugins.
