@@ -10,7 +10,7 @@
   // If we are in hash mode figure out if we are on a browser that is hit by 63777 and 85881
   //     https://bugs.webkit.org/show_bug.cgi?id=63777
   //     https://bugs.webkit.org/show_bug.cgi?id=85881
-  var _useReplaceState = /WebKit\/([\d.]+)/.exec(navigator.userAgent);
+  var _useReplaceState = /WebKit\/([\d.]+)/.exec(navigator.userAgent) && window.history.replaceState;
 
   // pattern to recognize state index in hash
   var hashStrip = /^(?:#|%23)*\d*(?:#|%23)*/;
