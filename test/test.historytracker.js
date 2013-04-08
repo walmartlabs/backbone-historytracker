@@ -115,7 +115,7 @@ $(document).ready(function() {
     }, 0);
   });
 
-  asyncTest("Router: go ignore", 22, function() {
+  asyncTest("Router: go ignore", 21, function() {
     var hist = Backbone.history;
 
     // Setup
@@ -126,11 +126,10 @@ $(document).ready(function() {
       hist.navigate('search/manhattan/p40', true);
     });
     step('40', 1, 3, function() {
-      hist.back(function(route) {
-        setTimeout(function() {
-          equals(hist.getFragment(), 'search/manhattan/p30', 'route returned value');
-          equals(hist.getIndex(), startingIndex+2, 'history index in back');
+      hist.back(function(fragment, route) {
+        equals(fragment, 'search/manhattan/p30', 'route returned value');
 
+        setTimeout(function() {
           hist.back(function(route) { return true; });
         }, 10);
         return false;
