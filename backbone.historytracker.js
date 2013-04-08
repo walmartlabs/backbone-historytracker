@@ -182,9 +182,9 @@
         Backbone.history.back(function(fragment) {
           clearTimeout(timeout);
 
-          var ret = _.isFunction(options.trigger) ? options.trigger.apply(this, arguments) : options.trigger;
-          options.callback && options.callback(fragment);
-          return ret;
+          var trigger = _.isFunction(options.trigger) ? options.trigger.apply(this, arguments) : options.trigger;
+          options.callback && options.callback(fragment, trigger);
+          return trigger;
         });
         timeout = setTimeout(function() {
           if (iter > limit) {
