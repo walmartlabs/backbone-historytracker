@@ -26,7 +26,7 @@
       if (history._trackDirection) {
         var oldIndex = history._directionIndex;
         history._directionIndex = history.loadIndex();
-        params.direction = history._directionIndex-oldIndex;
+        params.direction = history._directionIndex - oldIndex;
       }
       return params;
     }
@@ -39,13 +39,13 @@
     getIndex : function() {
       return this._directionIndex;
     },
-    
-    getFragment : function(fragment, forcePushState) {
+
+    getFragment : function(/* fragment, forcePushState */) {
       var rtn = _getFragment.apply(this, arguments);
       return rtn && rtn.replace(hashStrip, '');
     },
 
-    start: function(options) {
+    start: function(/* options */) {
       var rtn = _start.apply(this, arguments);
       // Direction tracking setup
       this._trackDirection  = !!this.options.trackDirection;
@@ -71,9 +71,9 @@
       var fromIframe = this.getFragment() == this.fragment && this.iframe;
       var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
       var navigateOptions = {
-          trigger: false,
-          replace: !loadedIndex,
-          forceIndex: loadedIndex || this._directionIndex+1
+        trigger: false,
+        replace: !loadedIndex,
+        forceIndex: loadedIndex || this._directionIndex + 1
       };
       _checkUrl.call(this, e, navigateOptions);
     },
@@ -87,7 +87,9 @@
         return;
       }
 
-      if (!options || options === true) options = {trigger: options};
+      if (!options || options === true) {
+        options = {trigger: options};
+      }
       var newIndex;
       if (this._trackDirection) {
         newIndex = options.forceIndex || (this._directionIndex + (options.replace ? 0 : 1));
@@ -103,21 +105,23 @@
     },
 
     _updateHash: function(location, frag, replace) {
-      var base = location.toString().replace(/(javascript:|#).*$/, '') + '#'; 
-      if (replace) { 
-        if (_useReplaceState) { 
-          window.history.replaceState({}, document.title, base + frag); 
-        } else { 
-          location.replace(base + frag); 
-        } 
-      } else { 
-        location.hash = frag;  
+      var base = location.toString().replace(/(javascript:|#).*$/, '') + '#';
+      if (replace) {
+        if (_useReplaceState) {
+          window.history.replaceState({}, document.title, base + frag);
+        } else {
+          location.replace(base + frag);
+        }
+      } else {
+        location.hash = frag;
       }
     },
 
     // Pulls the direction index out of the state or hash
     loadIndex : function(fragmentOverride) {
-      if (!this._trackDirection) return;
+      if (!this._trackDirection) {
+        return;
+      }
       if (!fragmentOverride && this._hasPushState) {
         return (this._state && this._state.index) || 0;
       } else {
