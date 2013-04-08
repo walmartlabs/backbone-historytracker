@@ -190,6 +190,7 @@ $(document).ready(function() {
 
     execStepOut(true, function() {
       hist.stepOut({
+        view: window,
         callback: function() {
           equals(hist.getFragment(), 'search/manhattan/p30');
           start();
@@ -202,6 +203,7 @@ $(document).ready(function() {
 
     execStepOut(true, function() {
       hist.stepOut({
+        view: window,
         limit: 2,
         callback: function() {
           equals(hist.getFragment(), 'search/manhattan/p40');
@@ -215,6 +217,7 @@ $(document).ready(function() {
 
     execStepOut(false, function() {
       hist.stepOut({
+        view: window,
         callback: function() {
           equals(hist.getFragment(), 'search/manhattan/p30');
           start();
