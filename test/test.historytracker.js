@@ -126,11 +126,11 @@ $(document).ready(function() {
       hist.navigate('search/manhattan/p40', true);
     });
     step('40', 1, 3, function() {
-      hist.back(function(fragment, route) {
+      hist.back(function(fragment) {
         equals(fragment, 'search/manhattan/p30', 'route returned value');
 
         setTimeout(function() {
-          hist.back(function(route) { return true; });
+          hist.back(function() { return true; });
         }, 10);
         return false;
       });
