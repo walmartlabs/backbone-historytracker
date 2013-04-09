@@ -41,7 +41,7 @@ Accepts an `options` hash with the following fields:
     operation significantly faster.
 * `complete`: Callback that is called when the operation is complete
 * `trigger`: Same options as the trigger parameter above.
-* `limit` : Maximum number of steps to take.
+* `stepLimit` : Maximum number of steps to take.
     This is designed to prevent runaway operations. Defaults to 10
 
 ## History Location Tracking

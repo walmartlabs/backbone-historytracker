@@ -167,7 +167,7 @@
     stepOut: function(options) {
       options = options || {};
 
-      var limit = options.limit || 10,
+      var stepLimit = options.stepLimit || 10,
           iter = 0,
           timeout;
 
@@ -187,7 +187,7 @@
           return trigger;
         });
         timeout = setTimeout(function() {
-          if (iter > limit) {
+          if (iter > stepLimit) {
             options.callback && options.callback(false);
           } else {
             step();

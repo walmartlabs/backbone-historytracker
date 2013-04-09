@@ -198,13 +198,13 @@ $(document).ready(function() {
       });
     });
   });
-  asyncTest("Router: stepOut - limit", 1, function() {
+  asyncTest("Router: stepOut - stepLimit", 1, function() {
     var hist = Backbone.history;
 
     execStepOut(true, function() {
       hist.stepOut({
         view: window,
-        limit: 2,
+        stepLimit: 2,
         callback: function() {
           equals(hist.getFragment(), 'search/manhattan/p40');
           start();
