@@ -1,3 +1,4 @@
+/*global async */
 $(document).ready(function() {
 
   var router = null;
@@ -113,5 +114,152 @@ $(document).ready(function() {
     setTimeout(function() {
       Backbone.history.navigate('search/manhattan/p20', true);
     }, 0);
+  });
+
+  asyncTest("Router: go ignore", 21, function() {
+    var hist = Backbone.history;
+
+    // Setup
+    step('20', 1, 1, function() {
+      hist.navigate('search/manhattan/p30', true);
+    });
+    step('30', 1, 2, function() {
+      hist.navigate('search/manhattan/p40', true);
+    });
+    step('40', 1, 3, function() {
+      hist.back(function(fragment) {
+        equals(fragment, 'search/manhattan/p30', 'route returned value');
+
+        setTimeout(function() {
+          hist.back(function() { return true; });
+        }, 10);
+        return false;
+      });
+    });
+    step('20', -1, 1, cleanup);
+
+    routeBind(steps[0]);
+    setTimeout(function() {
+      hist.navigate('search/manhattan/p20', true);
+    }, 0);
+  });
+
+  function execStepOut(history, test) {
+    var hist = Backbone.history,
+        iframe = $('<iframe src="about:blank">');
+
+    var steps = [
+      function() {
+        hist.navigate('search/manhattan/p20', true);
+      },
+      function() {
+        hist.navigate('search/manhattan/p30', true);
+      },
+      function() {
+        hist.navigate('search/manhattan/p40', true);
+        $('#qunit-fixture').append(iframe);
+      }
+    ];
+
+    if (history) {
+      steps.push(
+        function() {
+          iframe[0].contentWindow.location = 'about:blank#foo';
+        },
+        function() {
+          iframe[0].contentWindow.location = 'about:blank#bar';
+        },
+        function() {
+          iframe[0].contentWindow.location = 'about:blank#baz';
+        });
+    }
+
+    steps.push(test);
+
+    steps = _.map(steps, function(step) {
+      return function(callback) {
+        setTimeout(function() {
+          step();
+          callback();
+        }, 100);
+      };
+    });
+
+    async.series(steps);
+  }
+
+  asyncTest("Router: stepOut", 1, function() {
+    var hist = Backbone.history;
+
+    execStepOut(true, function() {
+      hist.stepOut({
+        view: window,
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p30');
+          start();
+        }
+      });
+    });
+  });
+  asyncTest("Router: stepOut - trigger", 2, function() {
+    var hist = Backbone.history;
+
+    console.log('why you fail');
+    execStepOut(true, function() {
+      hist.stepOut({
+        view: window,
+        trigger: 'search/manhattan/p20',
+        routeLimit: 2,
+        callback: function(fragment, trigger) {
+          equals(fragment, 'search/manhattan/p20');
+          equals(trigger, true);
+          start();
+        }
+      });
+    });
+  });
+  asyncTest("Router: stepOut - trigger limit", 2, function() {
+    var hist = Backbone.history;
+
+    console.log('but you work');
+    execStepOut(true, function() {
+      hist.stepOut({
+        view: window,
+        trigger: 'search/manhattan/p10',
+        routeLimit: 2,
+        callback: function(fragment, trigger) {
+          equals(fragment, 'search/manhattan/p10');
+          equals(trigger, false);
+          start();
+        }
+      });
+    });
+  });
+  asyncTest("Router: stepOut - stepLimit", 1, function() {
+    var hist = Backbone.history;
+
+    execStepOut(true, function() {
+      hist.stepOut({
+        view: window,
+        stepLimit: 2,
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p40');
+          start();
+        }
+      });
+    });
+  });
+  asyncTest("Router: stepOut - no iframe", 1, function() {
+    var hist = Backbone.history;
+
+    execStepOut(false, function() {
+      hist.stepOut({
+        view: window,
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p30');
+          start();
+        }
+      });
+    });
   });
 });
