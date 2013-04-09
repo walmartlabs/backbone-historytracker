@@ -150,6 +150,9 @@ $(document).ready(function() {
 
     var steps = [
       function() {
+        hist.navigate('search/manhattan/p20', true);
+      },
+      function() {
         hist.navigate('search/manhattan/p30', true);
       },
       function() {
