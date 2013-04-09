@@ -168,6 +168,8 @@
       options = options || {};
 
       var stepLimit = options.stepLimit || 10,
+          routeLimit,
+          desiredRoute,
           iter = 0,
           timeout;
 
@@ -175,15 +177,39 @@
         options.view.$('iframe').remove();
       }
 
+      if (_.isString(options.trigger)) {
+        // If a string is passed then we will ensure that they land on the desired route one way
+        // or the other
+        desiredRoute = options.trigger;
+        routeLimit = options.routeLimit || 1;
+
+        options.trigger = function(fragment) {
+          routeLimit--;
+
+          if (fragment === desiredRoute) {
+            return true;
+          } else if (routeLimit <= 0) {
+            Backbone.history.navigate(desiredRoute, {replace: true, trigger: true});
+            setTimeout(function() {
+              options.callback && options.callback(desiredRoute, false);
+            }, 10);
+          } else {
+            setTimeout(step, 10);
+          }
+        };
+      }
+
       // General flow here is to try to do a back navigation and wait for a backbone event to trigger
       // If one does not within a given timeout then repeat.
-      (function step() {
+      function step() {
         iter++;
         Backbone.history.back(function(fragment) {
           clearTimeout(timeout);
 
           var trigger = _.isFunction(options.trigger) ? options.trigger.apply(this, arguments) : options.trigger;
-          options.callback && options.callback(fragment, trigger);
+          if (trigger || !desiredRoute) {
+            options.callback && options.callback(fragment, !!trigger);
+          }
           return trigger;
         });
         timeout = setTimeout(function() {
@@ -193,7 +219,8 @@
             step();
           }
         }, 100);
-      })();
+      }
+      step();
     }
   });
 

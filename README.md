@@ -39,10 +39,14 @@ Accepts an `options` hash with the following fields:
     passed as it will reduce the chance of side effects from the iframe navigation and
     under [some browsers](https://bugzilla.mozilla.org/show_bug.cgi?id=293417) it will make the
     operation significantly faster.
-* `complete`: Callback that is called when the operation is complete
-* `trigger`: Same options as the trigger parameter above.
+* `complete(fragment, existingTriggered)`: Callback that is called when the operation is complete
+* `trigger`: Same options as the trigger parameter above. Additionally may be a string parameter
+    which will ensure the final route is the result of the operation.
 * `stepLimit` : Maximum number of steps to take.
     This is designed to prevent runaway operations. Defaults to 10
+* `routeLimit`: When used in conjunction with a string `trigger` parameter defines the maximum
+    number of steps to try to find the trigger parameter before forcing the new trigger route.
+    Defaults to 1 and is independent of the `stepLimit` parameter.
 
 ## History Location Tracking
 

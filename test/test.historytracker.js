@@ -201,6 +201,40 @@ $(document).ready(function() {
       });
     });
   });
+  asyncTest("Router: stepOut - trigger", 2, function() {
+    var hist = Backbone.history;
+
+    console.log('why you fail');
+    execStepOut(true, function() {
+      hist.stepOut({
+        view: window,
+        trigger: 'search/manhattan/p20',
+        routeLimit: 2,
+        callback: function(fragment, trigger) {
+          equals(fragment, 'search/manhattan/p20');
+          equals(trigger, true);
+          start();
+        }
+      });
+    });
+  });
+  asyncTest("Router: stepOut - trigger limit", 2, function() {
+    var hist = Backbone.history;
+
+    console.log('but you work');
+    execStepOut(true, function() {
+      hist.stepOut({
+        view: window,
+        trigger: 'search/manhattan/p10',
+        routeLimit: 2,
+        callback: function(fragment, trigger) {
+          equals(fragment, 'search/manhattan/p10');
+          equals(trigger, false);
+          start();
+        }
+      });
+    });
+  });
   asyncTest("Router: stepOut - stepLimit", 1, function() {
     var hist = Backbone.history;
 
