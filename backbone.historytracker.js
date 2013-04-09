@@ -131,10 +131,10 @@
     },
 
     route: function (route, callback) {
-      return _route.call(this, route, _.bind(function() {
+      return _route.call(this, route, _.bind(function(fragment) {
         var ignore = this._ignoreChange;
         if (_.isFunction(ignore)) {
-          ignore = !this._ignoreChange(Backbone.history.getFragment(), route);
+          ignore = !this._ignoreChange(fragment, route);
         }
 
         if (ignore) {
