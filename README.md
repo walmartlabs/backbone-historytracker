@@ -39,7 +39,7 @@ Accepts an `options` hash with the following fields:
     passed as it will reduce the chance of side effects from the iframe navigation and
     under [some browsers](https://bugzilla.mozilla.org/show_bug.cgi?id=293417) it will make the
     operation significantly faster.
-* `complete(fragment, existingTriggered)`: Callback that is called when the operation is complete
+* `callback(fragment, existingTriggered)`: Callback that is called when the operation is complete
 * `trigger`: Same options as the trigger parameter above. Additionally may be a string parameter
     which will ensure the final route is the result of the operation.
 * `stepLimit` : Maximum number of steps to take.
