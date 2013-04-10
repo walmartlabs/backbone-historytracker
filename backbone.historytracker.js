@@ -131,8 +131,13 @@
     },
 
     route: function (route, callback) {
-      return _route.call(this, route, _.bind(function() {
-        if (this._ignoreChange) {
+      return _route.call(this, route, _.bind(function(fragment) {
+        var ignore = this._ignoreChange;
+        if (_.isFunction(ignore)) {
+          ignore = !this._ignoreChange(fragment, route);
+        }
+
+        if (ignore) {
           this._ignoreChange = false;
           this._directionIndex = Backbone.history.loadIndex();
           this._pendingNavigate && setTimeout(Backbone.history._pendingNavigate, 0);
@@ -151,8 +156,71 @@
     },
 
     go : function(count, triggerRoute) {
-      this._ignoreChange = !triggerRoute;
+      this._ignoreChange = _.isFunction(triggerRoute) ? triggerRoute : !triggerRoute;
       window.history.go(count);
+    },
+
+    /**
+     * Hack to work around iframes that make have screwed with our history state.
+     * Really one should choose not to use iframes but sometimes you must, even in 2013....
+     */
+    stepOut: function(options) {
+      options = options || {};
+
+      var stepLimit = options.stepLimit || 10,
+          routeLimit,
+          desiredRoute,
+          iter = 0,
+          timeout;
+
+      if (options.view) {
+        options.view.$('iframe').remove();
+      }
+
+      if (_.isString(options.trigger)) {
+        // If a string is passed then we will ensure that they land on the desired route one way
+        // or the other
+        desiredRoute = options.trigger;
+        routeLimit = options.routeLimit || 1;
+
+        options.trigger = function(fragment) {
+          routeLimit--;
+
+          if (fragment === desiredRoute) {
+            return true;
+          } else if (routeLimit <= 0) {
+            Backbone.history.navigate(desiredRoute, {replace: true, trigger: true});
+            setTimeout(function() {
+              options.callback && options.callback(desiredRoute, false);
+            }, 10);
+          } else {
+            setTimeout(step, 10);
+          }
+        };
+      }
+
+      // General flow here is to try to do a back navigation and wait for a backbone event to trigger
+      // If one does not within a given timeout then repeat.
+      function step() {
+        iter++;
+        Backbone.history.back(function(fragment) {
+          clearTimeout(timeout);
+
+          var trigger = _.isFunction(options.trigger) ? options.trigger.apply(this, arguments) : options.trigger;
+          if (trigger || !desiredRoute) {
+            options.callback && options.callback(fragment, !!trigger);
+          }
+          return trigger;
+        });
+        timeout = setTimeout(function() {
+          if (iter > stepLimit) {
+            options.callback && options.callback(false);
+          } else {
+            step();
+          }
+        }, 100);
+      }
+      step();
     }
   });
 
