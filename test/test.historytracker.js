@@ -164,13 +164,13 @@ $(document).ready(function() {
     if (history) {
       steps.push(
         function() {
-          iframe[0].contentWindow.location = 'about:blank#foo';
+          iframe[0].src = 'about:blank#foo';
         },
         function() {
-          iframe[0].contentWindow.location = 'about:blank#bar';
+          iframe[0].src = 'about:blank#bar';
         },
         function() {
-          iframe[0].contentWindow.location = 'about:blank#baz';
+          iframe[0].src = 'about:blank#baz';
         });
     }
 
