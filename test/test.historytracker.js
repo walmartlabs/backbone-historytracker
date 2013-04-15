@@ -174,6 +174,9 @@ $(document).ready(function() {
         });
     }
 
+    steps.push(function() {
+      equals(hist.getFragment(), 'search/manhattan/p40');
+    });
     steps.push(test);
 
     steps = _.map(steps, function(step) {
@@ -188,7 +191,7 @@ $(document).ready(function() {
     async.series(steps);
   }
 
-  asyncTest("Router: stepOut", 1, function() {
+  asyncTest("Router: stepOut", 2, function() {
     var hist = Backbone.history;
 
     execStepOut(true, function() {
@@ -201,7 +204,7 @@ $(document).ready(function() {
       });
     });
   });
-  asyncTest("Router: stepOut - trigger", 2, function() {
+  asyncTest("Router: stepOut - trigger", 3, function() {
     var hist = Backbone.history;
 
     console.log('why you fail');
@@ -218,7 +221,7 @@ $(document).ready(function() {
       });
     });
   });
-  asyncTest("Router: stepOut - trigger limit", 2, function() {
+  asyncTest("Router: stepOut - trigger limit", 3, function() {
     var hist = Backbone.history;
 
     console.log('but you work');
@@ -235,7 +238,7 @@ $(document).ready(function() {
       });
     });
   });
-  asyncTest("Router: stepOut - stepLimit", 1, function() {
+  asyncTest("Router: stepOut - stepLimit", 3, function() {
     var hist = Backbone.history;
 
     execStepOut(true, function() {
@@ -249,7 +252,7 @@ $(document).ready(function() {
       });
     });
   });
-  asyncTest("Router: stepOut - no iframe", 1, function() {
+  asyncTest("Router: stepOut - no iframe", 2, function() {
     var hist = Backbone.history;
 
     execStepOut(false, function() {
