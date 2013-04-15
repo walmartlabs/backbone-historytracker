@@ -9,8 +9,16 @@
 
   // If we are in hash mode figure out if we are on a browser that is hit by 63777 and 85881
   //     https://bugs.webkit.org/show_bug.cgi?id=63777
-  //     https://bugs.webkit.org/show_bug.cgi?id=85881
-  var _useReplaceState = /WebKit\/([\d.]+)/.exec(navigator.userAgent) && window.history.replaceState;
+  var _useReplaceState = /WebKit\/([\d.]+)/.exec(navigator.userAgent) && window.history.replaceState,
+
+      // Some variants of android will not replace the location history properly, causing issues
+      // on back navigation. Hack around the replace API making it two step for these cases.
+      //
+      // This is likely tied to a specific Webkit version but sticking to the environments that we
+      // know this occurs in rather than trying to track down the webkit version that this might
+      // be impacting and possibly getting it wrong.
+      //    https://bugs.webkit.org/show_bug.cgi?id=85881
+      _fakeReplace = /Android\s+([\d.]+)/.exec(navigator.userAgent) && (parseFloat(RegExp.$1) < 4.2);
 
   // pattern to recognize state index in hash
   var hashStrip = /^(?:#|%23)*\d*(?:#|%23)*/;
@@ -47,6 +55,9 @@
 
     start: function(/* options */) {
       var rtn = _start.apply(this, arguments);
+
+      this._fakeReplace = _fakeReplace && !this.options.noReplaceHack;
+
       // Direction tracking setup
       this._trackDirection  = !!this.options.trackDirection;
       if (this._trackDirection) {
