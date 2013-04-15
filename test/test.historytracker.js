@@ -15,11 +15,11 @@ $(document).ready(function() {
   function routeBind(callback) {
     var handler = function() {
       var args = arguments;
+      Backbone.history.unbind('route', handler);
 
       // Let the route execute before we verify
       setTimeout(function() {
         callback.apply(undefined, args);
-        Backbone.history.unbind('route', handler);
       }, 0);
     };
     Backbone.history.bind('route', handler);
