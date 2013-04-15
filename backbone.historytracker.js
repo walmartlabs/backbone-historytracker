@@ -96,6 +96,21 @@
       if (this._ignoreChange) {
         this._pendingNavigate = _.bind(this.navigate, this, fragment, options);
         return;
+      } else if (options &&options.replace && this._fakeReplace) {
+        // Under older Android environment we have to back out and then trigger a route in two
+        // operations rather than an automic replace operation. Without this flow does not operate
+        // correctly:
+        //  1. Trigger #foo
+        //  2. Replace #bar
+        //  3. Trigger #baz
+        //
+        // This will trigger all of the proper routes but the history for this case will actually
+        // be #foo, #baz rather than the desired #bar, #baz, causing unexpected navigation.
+        options = _.omit(options, 'replace');
+        options._replace = true;
+        this._pendingNavigate = _.bind(this.navigate, this, fragment, options);
+        this.back();
+        return;
       }
 
       if (!options || options === true) {
@@ -104,6 +119,11 @@
       var newIndex;
       if (this._trackDirection) {
         newIndex = options.forceIndex || (this._directionIndex + (options.replace ? 0 : 1));
+
+        if (options._replace) {
+          // The step back mucked with our direction tracker. Update.
+          this._directionIndex++;
+        }
       }
       if (this._hasPushState) {
         options.state = {index: newIndex};
