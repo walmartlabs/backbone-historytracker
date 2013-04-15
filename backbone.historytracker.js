@@ -141,6 +141,7 @@
           this._ignoreChange = false;
           this._directionIndex = Backbone.history.loadIndex();
           this._pendingNavigate && setTimeout(Backbone.history._pendingNavigate, 0);
+          this._pendingNavigate = undefined;
         } else {
           callback && callback.apply(this, arguments);
         }
