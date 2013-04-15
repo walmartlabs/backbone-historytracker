@@ -146,7 +146,7 @@ $(document).ready(function() {
 
   function execStepOut(history, test) {
     var hist = Backbone.history,
-        iframe = $('<iframe src="about:blank">');
+        iframe = $('<iframe src="data:text/html;base64, PGRpdj4xPC9kaXY+">');
 
     var steps = [
       function() {
@@ -164,13 +164,13 @@ $(document).ready(function() {
     if (history) {
       steps.push(
         function() {
-          iframe[0].src = 'about:blank#foo';
+          iframe[0].setAttribute('src', 'data:text/html;base64, PGRpdj4yPC9kaXY+');
         },
         function() {
-          iframe[0].src = 'about:blank#bar';
+          iframe[0].setAttribute('src', 'data:text/html;base64, PGRpdj4zPC9kaXY+');
         },
         function() {
-          iframe[0].src = 'about:blank#baz';
+          iframe[0].setAttribute('src', 'data:text/html;base64, PGRpdj4yPC9kaXY+');
         });
     }
 
