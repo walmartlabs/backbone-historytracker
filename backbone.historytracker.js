@@ -203,6 +203,16 @@
       // If one does not within a given timeout then repeat.
       function step() {
         iter++;
+
+        // Timeout before as some envs actually have a sync callback for back. (Android 2.x notably)
+        timeout = setTimeout(function() {
+          if (iter > stepLimit) {
+            options.callback && options.callback(false);
+          } else {
+            step();
+          }
+        }, 100);
+
         Backbone.history.back(function(fragment) {
           clearTimeout(timeout);
 
@@ -212,13 +222,6 @@
           }
           return trigger;
         });
-        timeout = setTimeout(function() {
-          if (iter > stepLimit) {
-            options.callback && options.callback(false);
-          } else {
-            step();
-          }
-        }, 100);
       }
       step();
     }
