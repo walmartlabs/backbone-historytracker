@@ -238,7 +238,16 @@ $(document).ready(function() {
       });
     });
   });
-  asyncTest("Router: stepOut - stepLimit", 3, function() {
+
+  asyncTest("Router: stepOut - stepLimit", 2, function() {
+    // Android 2.x does not insert iframe history into the global history which is helpful
+    // for our desired behavior but means that we can't run tests like this.
+    var android = navigator.userAgent.match(/Android\s+([\d.]+)/);
+    if (android && parseFloat(android[1]) < 4) {
+      expect(0);
+      return start();
+    }
+
     var hist = Backbone.history;
 
     execStepOut(true, function() {
