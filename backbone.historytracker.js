@@ -96,7 +96,7 @@
       if (this._ignoreChange) {
         this._pendingNavigate = _.bind(this.navigate, this, fragment, options);
         return;
-      } else if (options &&options.replace && this._fakeReplace) {
+      } else if (options && options.replace && this._fakeReplace) {
         // Under older Android environment we have to back out and then trigger a route in two
         // operations rather than an automic replace operation. Without this flow does not operate
         // correctly:
