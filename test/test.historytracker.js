@@ -116,6 +116,24 @@ $(document).ready(function() {
     }, 0);
   });
 
+  asyncTest("Router: navigate with fake replace", 3, function() {
+    Backbone.history._fakeReplace = true;
+    Backbone.history.navigate('search/q1', true);
+    setTimeout(function() {
+      equals(router.query, 'q1');
+      Backbone.history.navigate('search/q2', true);
+      setTimeout(function() {
+        equals(router.query, 'q2');
+        Backbone.history.navigate('search/q1', {trigger: true, replace: true});
+        setTimeout(function() {
+          equals(router.query, 'q1');
+          Backbone.history._fakeReplace = false;
+          start();
+        }, 500);
+      }, 0);
+    }, 0);
+  });
+
   asyncTest("Router: go ignore", 21, function() {
     var hist = Backbone.history;
 
