@@ -171,7 +171,18 @@
         if (ignore) {
           this._ignoreChange = false;
           this._directionIndex = Backbone.history.loadIndex();
-          this._pendingNavigate && setTimeout(Backbone.history._pendingNavigate, 0);
+          var pendingNavigate = this._pendingNavigate;
+          if (pendingNavigate) {
+              var self = this;
+            _.defer(function() {
+              // back() was called before pendingNavigate and it could have updated
+              // this.fragment to the same as pending navigate fragment. This will make
+              // navigate a NOP. Hence resetting the fragment to make sure navigate will
+              // do its job.
+              self.fragment = undefined;
+              pendingNavigate();
+            });
+          }
           this._pendingNavigate = undefined;
         } else {
           callback && callback.apply(this, arguments);
