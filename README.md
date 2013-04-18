@@ -70,3 +70,36 @@ Usage
 To turn on the route indexing, use the `trackDirection` property.
 
     Backbone.history.start({trackDirection: true});
+
+## Hacks and Workarounds
+
+### Webkit location.replace
+
+https://bugs.webkit.org/show_bug.cgi?id=63777
+
+Webkit has known issues with `location.replace` so when available we opt to use `replaceState`
+under Webkit.
+
+### Android Replace Navigation
+
+https://bugs.webkit.org/show_bug.cgi?id=85881
+
+Under Android the replace operation does not properly replace content, leading to corruption of the
+history. Net effect is that a series of operations such as:
+
+1. Trigger #foo
+2. Replace #bar
+3. Trigger #baz
+
+Will corrupt the history producing an actual history of:
+
+1. #foo
+2. #baz
+
+This is fixed by making `replace` navigations two step on the devices known to exhibit this behavior.
+
+#### Caveats
+
+This will break sites that attempt to do a replace navigation on the first page. For sites that
+absolutely must do this, the `noReplaceHack` flag may be utilized at the expense of broken replace
+behavior in these environments.
