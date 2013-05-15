@@ -18,7 +18,12 @@
       // know this occurs in rather than trying to track down the webkit version that this might
       // be impacting and possibly getting it wrong.
       //    https://bugs.webkit.org/show_bug.cgi?id=85881
-      _fakeReplace = /Android\s+([\d.]+)/.exec(navigator.userAgent) && (parseFloat(RegExp.$1) < 4.2);
+      _fakeReplace = /Android\s+([\d.]+)/.exec(navigator.userAgent) && (parseFloat(RegExp.$1) < 4.2),
+
+      // Chrome for iOS has peculiar issue related to not cleaning up the window.history properly
+      // after submitting form to an iframe
+      _isChromeiOS = /CriOS/.test(navigator.userAgent);
+
 
   // pattern to recognize state index in hash
   var hashStrip = /^(?:#|%23)*\d*(?:#|%23)*/;
@@ -41,6 +46,8 @@
   });
 
   _.extend(Backbone.History.prototype, {
+    _isChromeiOS: _isChromeiOS,
+
     // Get the location of the current route within the backbone history.
     // This should be considered a hint
     // Returns -1 if history is unknown or disabled
@@ -206,6 +213,10 @@
     /**
      * Hack to work around iframes that make have screwed with our history state.
      * Really one should choose not to use iframes but sometimes you must, even in 2013....
+     *
+     * @param {!Object} options can contain 'beforeBack' callback called at the beginning
+     *    of step() function. It is not intended for production usage but can be useful in
+     *    unit tests
      */
     stepOut: function(options) {
       options = options || {};
@@ -214,10 +225,12 @@
           routeLimit,
           desiredRoute,
           iter = 0,
-          timeout;
+          timeout,
+          preventDoubleFormSubmission;
 
       if (options.view) {
         options.view.$('iframe').remove();
+        preventDoubleFormSubmission = this._isChromeiOS && options.view.$('form').length;
       }
 
       if (_.isString(options.trigger)) {
@@ -245,6 +258,7 @@
       // General flow here is to try to do a back navigation and wait for a backbone event to trigger
       // If one does not within a given timeout then repeat.
       function step() {
+        options.beforeBack && options.beforeBack(Backbone.history.getFragment(), iter);
         iter++;
 
         // Timeout before as some envs actually have a sync callback for back. (Android 2.x notably)
@@ -266,7 +280,21 @@
           return trigger;
         });
       }
-      step();
+
+      // In the Chrome for iOS submitting form data into iframe adds the window.history record with the same uri
+      // as the parent page has. This causes "double form submission" alert on history.back() and screws up the
+      // stepOut() logic. This history record is not being deleted when removing iframe.
+      // The hack below adds a parameter to the current uri (meaningless, with unique name), which prevents double
+      // form submission on history.back()
+      if (preventDoubleFormSubmission) {
+        var fakeUri = Backbone.history.getFragment();
+        fakeUri += (fakeUri.indexOf('?') !== -1 ? '&' : '?') + new Date().getTime();
+
+        Backbone.history.navigate(fakeUri);
+        setTimeout(step, 100);
+      } else {
+        step();
+      }
     }
   });
 
