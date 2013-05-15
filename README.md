@@ -98,6 +98,16 @@ Will corrupt the history producing an actual history of:
 
 This is fixed by making `replace` navigations two step on the devices known to exhibit this behavior.
 
+### Chrome for iOS form resubmission issue
+
+No bug filed yet.
+
+In the Google Chrome for iOS on the page containing iframe  submitting a form to an iframe (using method POST) adds the page URI to the `window.history`. 
+
+This causes the `Backbone.history.stepOut()` to make a first step back on the same URI, which leads to the form resubmission.
+
+This is fixed by navigating to the the current page URI with meaningless and unique search string appended.
+
 #### Caveats
 
 This will break sites that attempt to do a replace navigation on the first page. For sites that
