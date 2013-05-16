@@ -213,10 +213,6 @@
     /**
      * Hack to work around iframes that make have screwed with our history state.
      * Really one should choose not to use iframes but sometimes you must, even in 2013....
-     *
-     * @param {!Object} options can contain 'beforeBack' callback called at the beginning
-     *    of step() function. It is not intended for production usage but can be useful in
-     *    unit tests
      */
     stepOut: function(options) {
       options = options || {};

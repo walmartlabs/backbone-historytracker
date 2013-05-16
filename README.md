@@ -47,6 +47,9 @@ Accepts an `options` hash with the following fields:
 * `routeLimit`: When used in conjunction with a string `trigger` parameter defines the maximum
     number of steps to try to find the trigger parameter before forcing the new trigger route.
     Defaults to 1 and is independent of the `stepLimit` parameter.
+* `beforeBack(fragment, stepCount)`: callback that is called before making a step back in the
+    history. It is not intended for production usage (there's no production use case for it)
+    but it can be useful in unit tests.
 
 ## History Location Tracking
 
