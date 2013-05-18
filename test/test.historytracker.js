@@ -165,7 +165,7 @@ $(document).ready(function() {
   function execStepOut(options, test) {
     var hist = Backbone.history,
         iframe = $('<iframe id="foo-frame" src="data:text/html;base64, PGRpdj4xPC9kaXY+">'),
-        form = $('<form action="foo" method="POST" target="foo-frame"></form>');
+        form = $('<form action="" method="POST" target="foo-frame"></form>');
 
     var steps = [
       function() {
@@ -191,6 +191,15 @@ $(document).ready(function() {
         function() {
           iframe[0].setAttribute('src', 'data:text/html;base64, PGRpdj4yPC9kaXY+');
         });
+    }
+
+    if (options.emulateFormSubmit) {
+      steps.push(function() {
+        $('#qunit-fixture').append(form);
+      });
+      steps.push(function() {
+        form.submit();
+      });
     }
 
     steps.push(function() {
@@ -285,6 +294,20 @@ $(document).ready(function() {
     var hist = Backbone.history;
 
     execStepOut({history: false}, function() {
+      hist.stepOut({
+        view: window,
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p30');
+          start();
+        }
+      });
+    });
+  });
+
+  asyncTest("Router: stepOut - prevent form resubmission", function() {
+    var hist = Backbone.history;
+
+    execStepOut({history: false, emulateFormSubmit: true}, function() {
       hist.stepOut({
         view: window,
         callback: function() {
