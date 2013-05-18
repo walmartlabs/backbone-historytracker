@@ -18,12 +18,7 @@
       // know this occurs in rather than trying to track down the webkit version that this might
       // be impacting and possibly getting it wrong.
       //    https://bugs.webkit.org/show_bug.cgi?id=85881
-      _fakeReplace = /Android\s+([\d.]+)/.exec(navigator.userAgent) && (parseFloat(RegExp.$1) < 4.2),
-
-      // Chrome for iOS has peculiar issue related to not cleaning up the window.history properly
-      // after submitting form to an iframe
-      _isChromeiOS = /CriOS/.test(navigator.userAgent);
-
+      _fakeReplace = /Android\s+([\d.]+)/.exec(navigator.userAgent) && (parseFloat(RegExp.$1) < 4.2);
 
   // pattern to recognize state index in hash
   var hashStrip = /^(?:#|%23)*\d*(?:#|%23)*/;
@@ -46,8 +41,6 @@
   });
 
   _.extend(Backbone.History.prototype, {
-    _isChromeiOS: _isChromeiOS,
-
     // Get the location of the current route within the backbone history.
     // This should be considered a hint
     // Returns -1 if history is unknown or disabled
@@ -201,13 +194,26 @@
       this.go(-1, triggerRoute);
     },
 
-    foward : function(triggerRoute) {
+    forward : function(triggerRoute) {
       this.go(1, triggerRoute);
     },
 
     go : function(count, triggerRoute) {
       this._ignoreChange = _.isFunction(triggerRoute) ? triggerRoute : !triggerRoute;
-      window.history.go(count);
+
+      // Explicitly use `back()` and `forward()` methods since `go(1)` and `go(-1)` may behave
+      // unexpectedly in different browsers, although their behavior should be equivalent; see
+      // the Chromium bug https://code.google.com/p/chromium/issues/detail?id=241888
+      switch (count) {
+        case -1:
+          window.history.back();
+          break;
+        case 1:
+          window.history.forward();
+          break;
+        default:
+          window.history.go(count);
+      }
     },
 
     /**
@@ -221,12 +227,10 @@
           routeLimit,
           desiredRoute,
           iter = 0,
-          timeout,
-          preventDoubleFormSubmission;
+          timeout;
 
       if (options.view) {
         options.view.$('iframe').remove();
-        preventDoubleFormSubmission = this._isChromeiOS && options.view.$('form').length;
       }
 
       if (_.isString(options.trigger)) {
@@ -254,7 +258,6 @@
       // General flow here is to try to do a back navigation and wait for a backbone event to trigger
       // If one does not within a given timeout then repeat.
       function step() {
-        options.beforeBack && options.beforeBack(Backbone.history.getFragment(), iter);
         iter++;
 
         // Timeout before as some envs actually have a sync callback for back. (Android 2.x notably)
@@ -277,20 +280,7 @@
         });
       }
 
-      // In the Chrome for iOS submitting form data into iframe adds the window.history record with the same uri
-      // as the parent page has. This causes "double form submission" alert on history.back() and screws up the
-      // stepOut() logic. This history record is not being deleted when removing iframe.
-      // The hack below adds a parameter to the current uri (meaningless, with unique name), which prevents double
-      // form submission on history.back()
-      if (preventDoubleFormSubmission) {
-        var fakeUri = Backbone.history.getFragment();
-        fakeUri += (fakeUri.indexOf('?') !== -1 ? '&' : '?') + new Date().getTime();
-
-        Backbone.history.navigate(fakeUri);
-        setTimeout(step, 100);
-      } else {
-        step();
-      }
+      step();
     }
   });
 

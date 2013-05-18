@@ -180,13 +180,6 @@ $(document).ready(function() {
       }
     ];
 
-    if (options.emulateFormSubmit) {
-      steps.push(function() {
-        $('#qunit-fixture').append(form);
-        hist.navigate('search/manhattan/p40', true);
-      });
-    }
-
     if (options.history) {
       steps.push(
         function() {
@@ -296,31 +289,6 @@ $(document).ready(function() {
         view: window,
         callback: function() {
           equals(hist.getFragment(), 'search/manhattan/p30');
-          start();
-        }
-      });
-    });
-  });
-
-  asyncTest("Router: stepOut - prevent form resubmission", function() {
-    var hist = Backbone.history,
-        targetRoute = 'search/manhattan/p30',
-        initialRoute = 'search/manhattan/p40';
-
-    hist._isChromeiOS = true;
-
-    execStepOut({history: false, emulateFormSubmit: true}, function() {
-      hist.stepOut({
-        view: window,
-        trigger: targetRoute,
-        beforeBack: function(fragment, stepCount) {
-          // We shouldn't hit the initial route before the 2nd step back since it will cause form resubmission
-          // (if the one was submitted) in Chrome for iOS
-          ok(!(fragment === initialRoute && stepCount === 1));
-          prevRoute = fragment;
-        },
-        callback: function() {
-          equals(hist.getFragment(), targetRoute);
           start();
         }
       });

@@ -47,9 +47,6 @@ Accepts an `options` hash with the following fields:
 * `routeLimit`: When used in conjunction with a string `trigger` parameter defines the maximum
     number of steps to try to find the trigger parameter before forcing the new trigger route.
     Defaults to 1 and is independent of the `stepLimit` parameter.
-* `beforeBack(fragment, stepCount)`: callback that is called before making a step back in the
-    history. It is not intended for production usage (there's no production use case for it)
-    but it can be useful in unit tests.
 
 ## History Location Tracking
 
@@ -103,13 +100,13 @@ This is fixed by making `replace` navigations two step on the devices known to e
 
 ### Chrome for iOS form resubmission issue
 
-No bug filed yet.
+https://code.google.com/p/chromium/issues/detail?id=241888
 
-In the Google Chrome for iOS on the page containing iframe  submitting a form to an iframe (using method POST) adds the page URI to the `window.history`. 
-
-This causes the `Backbone.history.stepOut()` to make a first step back on the same URI, which leads to the form resubmission.
-
-This is fixed by navigating to the the current page URI with meaningless and unique search string appended.
+In Google Chrome for iOS the behavior of `window.history.back()` and `window.history.go(-1)` are
+not equivalent. In case when page containing iframe submits a form to an iframe (via method POST)
+the page URI is getting added to `window.history`, and the following call of `window.history.go(-1)`
+causes the attempt to resubmit the form, and, consequently shows the "Confirm form resubmission" 
+dialog, when `window.history.back()` behaves as expected.
 
 #### Caveats
 
