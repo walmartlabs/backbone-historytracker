@@ -203,7 +203,8 @@
 
       // Explicitly use `back()` and `forward()` methods since `go(1)` and `go(-1)` may behave
       // unexpectedly in different browsers, although their behavior should be equivalent; see
-      // the Chromium bug https://code.google.com/p/chromium/issues/detail?id=241888
+      // the Chromium bugs https://code.google.com/p/chromium/issues/detail?id=241888 and
+      // https://code.google.com/p/chromium/issues/detail?id=244434
       switch (count) {
         case -1:
           window.history.back();
