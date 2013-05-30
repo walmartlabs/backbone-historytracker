@@ -162,9 +162,10 @@ $(document).ready(function() {
     }, 0);
   });
 
-  function execStepOut(history, test) {
+  function execStepOut(options, test) {
     var hist = Backbone.history,
-        iframe = $('<iframe src="data:text/html;base64, PGRpdj4xPC9kaXY+">');
+        iframe = $('<iframe id="foo-frame" src="data:text/html;base64, PGRpdj4xPC9kaXY+">'),
+        form = $('<form action="" method="POST" target="foo-frame"></form>');
 
     var steps = [
       function() {
@@ -179,7 +180,7 @@ $(document).ready(function() {
       }
     ];
 
-    if (history) {
+    if (options.history) {
       steps.push(
         function() {
           iframe[0].setAttribute('src', 'data:text/html;base64, PGRpdj4yPC9kaXY+');
@@ -190,6 +191,15 @@ $(document).ready(function() {
         function() {
           iframe[0].setAttribute('src', 'data:text/html;base64, PGRpdj4yPC9kaXY+');
         });
+    }
+
+    if (options.emulateFormSubmit) {
+      steps.push(function() {
+        $('#qunit-fixture').append(form);
+      });
+      steps.push(function() {
+        form.submit();
+      });
     }
 
     steps.push(function() {
@@ -226,7 +236,7 @@ $(document).ready(function() {
     var hist = Backbone.history;
 
     console.log('why you fail');
-    execStepOut(true, function() {
+    execStepOut({history: true}, function() {
       hist.stepOut({
         view: window,
         trigger: 'search/manhattan/p20',
@@ -243,7 +253,7 @@ $(document).ready(function() {
     var hist = Backbone.history;
 
     console.log('but you work');
-    execStepOut(true, function() {
+    execStepOut({history: true}, function() {
       hist.stepOut({
         view: window,
         trigger: 'search/manhattan/p10',
@@ -268,7 +278,7 @@ $(document).ready(function() {
 
     var hist = Backbone.history;
 
-    execStepOut(true, function() {
+    execStepOut({history: true}, function() {
       hist.stepOut({
         view: window,
         stepLimit: 2,
@@ -279,10 +289,25 @@ $(document).ready(function() {
       });
     });
   });
+
   asyncTest("Router: stepOut - no iframe", 2, function() {
     var hist = Backbone.history;
 
-    execStepOut(false, function() {
+    execStepOut({history: false}, function() {
+      hist.stepOut({
+        view: window,
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p30');
+          start();
+        }
+      });
+    });
+  });
+
+  asyncTest("Router: stepOut - prevent form resubmission", function() {
+    var hist = Backbone.history;
+
+    execStepOut({history: false, emulateFormSubmit: true}, function() {
       hist.stepOut({
         view: window,
         callback: function() {

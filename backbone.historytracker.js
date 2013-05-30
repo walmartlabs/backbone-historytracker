@@ -194,13 +194,27 @@
       this.go(-1, triggerRoute);
     },
 
-    foward : function(triggerRoute) {
+    forward : function(triggerRoute) {
       this.go(1, triggerRoute);
     },
 
     go : function(count, triggerRoute) {
       this._ignoreChange = _.isFunction(triggerRoute) ? triggerRoute : !triggerRoute;
-      window.history.go(count);
+
+      // Explicitly use `back()` and `forward()` methods since `go(1)` and `go(-1)` may behave
+      // unexpectedly in different browsers, although their behavior should be equivalent; see
+      // the Chromium bugs https://code.google.com/p/chromium/issues/detail?id=241888 and
+      // https://code.google.com/p/chromium/issues/detail?id=244434
+      switch (count) {
+        case -1:
+          window.history.back();
+          break;
+        case 1:
+          window.history.forward();
+          break;
+        default:
+          window.history.go(count);
+      }
     },
 
     /**
@@ -266,6 +280,7 @@
           return trigger;
         });
       }
+
       step();
     }
   });
