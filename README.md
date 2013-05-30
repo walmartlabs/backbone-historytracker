@@ -98,6 +98,19 @@ Will corrupt the history producing an actual history of:
 
 This is fixed by making `replace` navigations two step on the devices known to exhibit this behavior.
 
+### Chrome for iOS form resubmission issue
+
+https://code.google.com/p/chromium/issues/detail?id=241888
+https://code.google.com/p/chromium/issues/detail?id=244434
+
+In Google Chrome for iOS the behavior of `window.history.back()` and `window.history.go(-1)` are
+not equivalent. In case when page containing iframe submits a form to an iframe (via method POST)
+the page URI is getting added to `window.history`, and the following call of `window.history.go(-1)`
+causes the attempt to resubmit the form, and, consequently shows the "Confirm form resubmission" 
+dialog, when `window.history.back()` behaves as expected.
+
+Expected to be fixed in Chrome for iOS in v.28.
+
 #### Caveats
 
 This will break sites that attempt to do a replace navigation on the first page. For sites that
