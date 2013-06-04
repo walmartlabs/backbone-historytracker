@@ -1,6 +1,6 @@
 {
   "name": "backbone.historytracker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "url": "git://github.com/walmartlabs/backbone-historytracker.git"
   },
@@ -13,7 +13,6 @@
   },
   "scripts": {
     "start": "node test/bin/server.js . 8083",
-
     "test": "phantomjs test/bin/run-qunit.js 'http://localhost:8083/test/index.html'"
   }
 }
