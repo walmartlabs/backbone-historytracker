@@ -1,0 +1,12 @@
+{
+  "name": "backbone-historytracker",
+  "version": "1.0.1",
+  "main": "backbone.historytracker.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test",
+    "lib"
+  ]
+}
