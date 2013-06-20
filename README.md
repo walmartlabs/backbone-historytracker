@@ -98,6 +98,12 @@ Will corrupt the history producing an actual history of:
 
 This is fixed by making `replace` navigations two step on the devices known to exhibit this behavior.
 
+#### Caveats
+
+This will break sites that attempt to do a replace navigation on the first page. For sites that
+absolutely must do this, the `noReplaceHack` flag may be utilized at the expense of broken replace
+behavior in these environments.
+
 ### Chrome for iOS form resubmission issue
 
 https://code.google.com/p/chromium/issues/detail?id=241888
@@ -110,12 +116,6 @@ causes the attempt to resubmit the form, and, consequently shows the "Confirm fo
 dialog, when `window.history.back()` behaves as expected.
 
 Expected to be fixed in Chrome for iOS in v.28.
-
-#### Caveats
-
-This will break sites that attempt to do a replace navigation on the first page. For sites that
-absolutely must do this, the `noReplaceHack` flag may be utilized at the expense of broken replace
-behavior in these environments.
 
 ## Running Unit Tests
 
