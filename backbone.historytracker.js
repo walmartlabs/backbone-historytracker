@@ -168,8 +168,9 @@
           ignore = !this._ignoreChange(fragment, route);
         }
 
+        this._ignoreChange = false;
+
         if (ignore) {
-          this._ignoreChange = false;
           this._directionIndex = Backbone.history.loadIndex();
           var pendingNavigate = this._pendingNavigate;
           if (pendingNavigate) {
