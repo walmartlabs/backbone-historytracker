@@ -116,3 +116,8 @@ Expected to be fixed in Chrome for iOS in v.28.
 This will break sites that attempt to do a replace navigation on the first page. For sites that
 absolutely must do this, the `noReplaceHack` flag may be utilized at the expense of broken replace
 behavior in these environments.
+
+## Running Unit Tests
+
+1. In `backbone-historytracker` directory run `node ./test/bin/server.js "" 1234`
+2. In the browser navigate to `http://localhost:1234/test/index.html`
