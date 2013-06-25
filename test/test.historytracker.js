@@ -222,7 +222,7 @@ $(document).ready(function() {
   asyncTest("Router: stepOut", 2, function() {
     var hist = Backbone.history;
 
-    execStepOut(true, function() {
+    execStepOut({history: true}, function() {
       hist.stepOut({
         view: window,
         callback: function() {
@@ -232,6 +232,29 @@ $(document).ready(function() {
       });
     });
   });
+
+  asyncTest("Router: navigate after stepOut", function() {
+    var hist = Backbone.history;
+
+    execStepOut({history: true}, function() {
+      hist.stepOut({
+        trigger: true,
+        view: window,
+        callback: function() {
+          equals(hist.getFragment(), 'search/manhattan/p30');
+
+          setTimeout(function() {
+            hist.navigate('search/manhattan/p40', {trigger: true});
+            setTimeout(function() {
+              equals(hist.getFragment(), 'search/manhattan/p40');
+              start();
+            }, 100);
+          }, 100);
+        }
+      });
+    });
+  });
+
   asyncTest("Router: stepOut - trigger", 3, function() {
     var hist = Backbone.history;
 

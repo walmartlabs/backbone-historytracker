@@ -98,6 +98,12 @@ Will corrupt the history producing an actual history of:
 
 This is fixed by making `replace` navigations two step on the devices known to exhibit this behavior.
 
+#### Caveats
+
+This will break sites that attempt to do a replace navigation on the first page. For sites that
+absolutely must do this, the `noReplaceHack` flag may be utilized at the expense of broken replace
+behavior in these environments.
+
 ### Chrome for iOS form resubmission issue
 
 https://code.google.com/p/chromium/issues/detail?id=241888
@@ -111,8 +117,7 @@ dialog, when `window.history.back()` behaves as expected.
 
 Expected to be fixed in Chrome for iOS in v.28.
 
-#### Caveats
+## Running Unit Tests
 
-This will break sites that attempt to do a replace navigation on the first page. For sites that
-absolutely must do this, the `noReplaceHack` flag may be utilized at the expense of broken replace
-behavior in these environments.
+1. In `backbone-historytracker` directory run `node ./test/bin/server.js "" 1234`
+2. In the browser navigate to `http://localhost:1234/test/index.html`
