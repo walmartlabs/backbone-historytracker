@@ -269,13 +269,15 @@
           } else {
             step();
           }
-        }, 100);
+        }, 300);
 
         Backbone.history.back(function(fragment) {
           clearTimeout(timeout);
 
           var trigger = _.isFunction(options.trigger) ? options.trigger.apply(this, arguments) : options.trigger;
           if (trigger || !desiredRoute) {
+            // Defer a callback since it can potentially call history's methods that the current execution would
+            // interfere with (history methods rely on history state like history._ingoreChange)
             options.callback && _.defer(function() { options.callback(fragment, !!trigger); });
           }
           return trigger;
