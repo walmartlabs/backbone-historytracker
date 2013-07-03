@@ -225,10 +225,8 @@
     stepOut: function(options) {
       options = options || {};
 
-      var stepLimit = options.stepLimit || 10,
-          routeLimit,
+      var routeLimit,
           desiredRoute,
-          iter = 0,
           timeout;
 
       if (options.view) {
@@ -248,11 +246,11 @@
             return true;
           } else if (routeLimit <= 0) {
             Backbone.history.navigate(desiredRoute, {replace: true, trigger: true});
-            setTimeout(function() {
+            _.defer(function() {
               options.callback && options.callback(desiredRoute, false);
-            }, 10);
+            });
           } else {
-            setTimeout(step, 10);
+            _.defer(step);
           }
         };
       }
@@ -260,23 +258,13 @@
       // General flow here is to try to do a back navigation and wait for a backbone event to trigger
       // If one does not within a given timeout then repeat.
       function step() {
-        iter++;
-
-        // Timeout before as some envs actually have a sync callback for back. (Android 2.x notably)
-        timeout = setTimeout(function() {
-          if (iter > stepLimit) {
-            options.callback && options.callback(false);
-          } else {
-            step();
-          }
-        }, 100);
 
         Backbone.history.back(function(fragment) {
           clearTimeout(timeout);
 
           var trigger = _.isFunction(options.trigger) ? options.trigger.apply(this, arguments) : options.trigger;
           if (trigger || !desiredRoute) {
-            options.callback && options.callback(fragment, !!trigger);
+            options.callback && _.defer(function() { options.callback(fragment, !!trigger); });
           }
           return trigger;
         });
