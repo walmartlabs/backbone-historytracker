@@ -225,8 +225,10 @@
     stepOut: function(options) {
       options = options || {};
 
-      var routeLimit,
+      var stepLimit = options.stepLimit || 10,
+          routeLimit,
           desiredRoute,
+          iter = 0,
           timeout;
 
       if (options.view) {
@@ -258,6 +260,16 @@
       // General flow here is to try to do a back navigation and wait for a backbone event to trigger
       // If one does not within a given timeout then repeat.
       function step() {
+        iter++;
+
+        // Timeout before as some envs actually have a sync callback for back. (Android 2.x notably)
+        timeout = setTimeout(function() {
+          if (iter > stepLimit) {
+            options.callback && options.callback(false);
+          } else {
+            step();
+          }
+        }, 100);
 
         Backbone.history.back(function(fragment) {
           clearTimeout(timeout);
