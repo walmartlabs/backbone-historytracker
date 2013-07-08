@@ -11,7 +11,7 @@
  * @param timeOutMillis the max amount of time to wait. If not specified, 3 sec is used.
  */
 function waitFor(testFx, onReady, timeOutMillis) {
-    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 10001, //< Default Max Timout is 10s
+    var maxtimeOutMillis = timeOutMillis || 20000,
         start = new Date().getTime(),
         condition = false,
         interval = setInterval(function() {
@@ -30,7 +30,7 @@ function waitFor(testFx, onReady, timeOutMillis) {
                     clearInterval(interval); //< Stop this interval
                 }
             }
-        }, 100); //< repeat check every 250ms
+        }, 100);
 };
 
 
