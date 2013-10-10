@@ -18,7 +18,7 @@
       // know this occurs in rather than trying to track down the webkit version that this might
       // be impacting and possibly getting it wrong.
       //    https://bugs.webkit.org/show_bug.cgi?id=85881
-      _fakeReplace = /Android\s+([\d.]+)/.exec(navigator.userAgent) && (parseFloat(RegExp.$1) < 4.2);
+      _fakeReplace = /Android\s+([\d.]+)((?!Chrome).)*$/.exec(navigator.userAgent) && (parseFloat(RegExp.$1) < 4.2);
 
   // pattern to recognize state index in hash
   var hashStrip = /^(?:#|%23)*\d*(?:#|%23)*/;
