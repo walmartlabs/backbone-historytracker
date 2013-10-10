@@ -2,7 +2,13 @@
 
 ## Development
 
-[Commits](https://github.com/walmartlabs/backbone-historytracker/compare/v1.0.3...master)
+[Commits](https://github.com/walmartlabs/backbone-historytracker/compare/v1.0.4...master)
+
+## v1.0.4 - October 10th, 2013
+
+- [#7](https://github.com/walmartlabs/backbone-historytracker/pull/7) - User agent matches Non chrome browser ([@catesandrew](https://api.github.com/users/catesandrew))
+
+[Commits](https://github.com/walmartlabs/backbone-historytracker/compare/v1.0.3...v1.0.4)
 
 ## v1.0.3 - August 30th, 2013
 
