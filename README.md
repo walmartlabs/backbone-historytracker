@@ -121,3 +121,7 @@ Expected to be fixed in Chrome for iOS in v.28.
 
 1. In `backbone-historytracker` directory run `node ./test/bin/server.js "" 1234`
 2. In the browser navigate to `http://localhost:1234/test/index.html`
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/walmartlabs/backbone-historytracker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
