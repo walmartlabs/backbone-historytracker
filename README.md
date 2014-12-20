@@ -3,6 +3,8 @@ Overview
 
 [![Build Status](https://secure.travis-ci.org/walmartlabs/backbone-historytracker.png?branch=master)](http://travis-ci.org/walmartlabs/backbone-historytracker)
 
+WARNING: This project is not being actively supported as it proved problematic when real clients started hitting it. It's also known to be broken under Backbone 1.1.2.
+
 History-tracker is a backbone plugin that enhances the history management options available in the
 core backbone library.
 
@@ -121,7 +123,3 @@ Expected to be fixed in Chrome for iOS in v.28.
 
 1. In `backbone-historytracker` directory run `node ./test/bin/server.js "" 1234`
 2. In the browser navigate to `http://localhost:1234/test/index.html`
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/walmartlabs/backbone-historytracker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
